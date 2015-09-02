@@ -9,7 +9,7 @@ android 6.0 移除了 apache httpclient
 ##这个库是基于HttpURLConnection封装的同步和异步网络请求库。
 
 使用异步访问使用如下：
- AsyncHttpCliect cliect = new AsyncHttpCliect();
+        AsyncHttpCliect cliect = new AsyncHttpCliect();
         Map<String, String> map = new HashMap<String, String>();
         map.put("ip", "63.223.108.42");
         cliect.post("http://ip.taobao.com/service/getIpInfo.php", map, new AsyncHttpResponseHandler() {
@@ -22,10 +22,10 @@ android 6.0 移除了 apache httpclient
         cliect.get("http://www.baidu.com", new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(HttpResponse response) {
-                
+
             }
         });
-        
+
 同步访问如下：
         HttpClient httpClient=new HttpClient();
         try {
