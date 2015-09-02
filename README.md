@@ -8,8 +8,7 @@ android 6.0 移除了 apache httpclient
 
 ##这个库是基于HttpURLConnection封装的同步和异步网络请求库。
 
-使用异步访问使用如下：
-##<a name="code"/>代码高亮
+##<a name="code"/>异步请求
 ```Java
  AsyncHttpCliect cliect = new AsyncHttpCliect();
         Map<String, String> map = new HashMap<String, String>();
@@ -28,11 +27,10 @@ android 6.0 移除了 apache httpclient
             }
         });
 ```
-##<a name="table"/>显示表格
-       
+
 
 同步访问如下：
-##<a name="code"/>代码高亮
+##<a name="code"/>同步请求
 ```Java
  HttpClient httpClient=new HttpClient();
         try {
