@@ -1,10 +1,10 @@
 # Httpclient
-android 6.0 移除了 apache httpclient 
-为了做兼容，我们必须考虑这个问题，下面推荐几个解决方案
+android 6.0 移除了 apache httpclient  <br>  
+为了做兼容，我们必须考虑这个问题，下面推荐几个解决方案<br>  
 
-1.使用okhttp、volley
-2.官网下载apache httpclient jar包
-3.使用HttpURLConnection访问网络。
+1.使用okhttp、volley<br>  
+2.官网下载apache httpclient jar包<br>  
+3.使用HttpURLConnection访问网络。<br>  
 
 ##这个库是基于HttpURLConnection封装的同步和异步网络请求库。
 
@@ -40,5 +40,3 @@ android 6.0 移除了 apache httpclient
             e.printStackTrace();
         }
 ```
-##<a name="table"/>显示表格
-       
