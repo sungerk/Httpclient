@@ -10,7 +10,7 @@ public class HttpClient {
 	private static final String DEFAULT_USER_AGENT = getDefaultUserAgent();
 	private static final String USER_AGENT = "User-Agent";
 	private static final String REFERER = "Referer";
-	private static final String Range = "Range";
+	private static final String RANGE = "Range";
 	/**
 	 * 默认超时时间
 	 */
@@ -91,7 +91,7 @@ public class HttpClient {
 	}
 
 	public void setRange(String range) {
-		addHeader(Range, range);
+		addHeader(RANGE, range);
 	}
 
 	public Map<String, String> getHeaderMap() {
