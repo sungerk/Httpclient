@@ -40,4 +40,4 @@ android 6.0 移除了 apache httpclient  <br>
             e.printStackTrace();
         }
 ```
-代码风格为什么眼熟？可以追溯到几年前开始研究的开源库 [async-http](http://loopj.com/android-async-http/) ，so感谢开源代码，感谢James Smith <br>
+代码风格为什么眼熟？没错是很像async-http不过async-http是基于apache httpclient。这个问题可以追溯到几年前开始研究的开源库 [async-http](http://loopj.com/android-async-http/) ，so感谢开源代码，感谢James Smith <br>
