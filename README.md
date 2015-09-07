@@ -1,0 +1,43 @@
+# Httpclient
+android 6.0 移除了 apache httpclient  <br>  
+为了做兼容，我们必须考虑这个问题，下面推荐几个解决方案<br>  
+
+1.使用okhttp、volley<br>  
+2.官网下载apache httpclient jar包<br>  
+3.使用HttpURLConnection访问网络。<br>  
+
+##这个库是基于HttpURLConnection封装的同步和异步网络请求库。
+
+##<a name="code"/>异步请求
+```Java
+ AsyncHttpCliect cliect = new AsyncHttpCliect();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("ip", "63.223.108.42");
+        cliect.post("http://ip.taobao.com/service/getIpInfo.php", map, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(HttpResponse response) {
+
+
+            }
+        });
+        cliect.get("http://www.baidu.com", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(HttpResponse response) {
+
+            }
+        });
+```
+
+
+同步访问如下：
+##<a name="code"/>同步请求
+```Java
+ HttpClient httpClient=new HttpClient();
+        try {
+            httpClient.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36");
+            httpClient.get("http://www.baidu.com").addParam("name","sunger").addParam("age","22").execute();
+        } catch (HttpClientException e) {
+            e.printStackTrace();
+        }
+```
+代码风格为什么眼熟？没错是很像async-http不过async-http是基于apache httpclient。这个问题可以追溯到几年前开始研究的开源库 [async-http](http://loopj.com/android-async-http/) ，so感谢开源代码，感谢James Smith <br>
