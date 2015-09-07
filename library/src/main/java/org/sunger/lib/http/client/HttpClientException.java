@@ -8,7 +8,7 @@ public class HttpClientException extends Exception {
 		initCause(cause);
 	}
 
-	HttpClientException(final String message) {
+	public HttpClientException(final String message) {
 		this(message, null);
 	}
 }

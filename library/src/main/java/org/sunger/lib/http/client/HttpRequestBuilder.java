@@ -1,6 +1,7 @@
 package org.sunger.lib.http.client;
 
 import android.text.TextUtils;
+import android.util.ArrayMap;
 
 import org.sunger.lib.http.utils.UrlUtil;
 
@@ -11,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class HttpRequestBuilder {
     public static final String UTF8_CHAR_SET = "UTF-8";
     private String urlString;
     private RequestMethod method;
-    private Map<String, String> parameters = new HashMap<String, String>();
+    private Map<String, String> parameters = new ArrayMap<>();
     private HttpURLConnection httpURLConnection;
     private HttpClient cliect;
 
@@ -55,7 +55,7 @@ public class HttpRequestBuilder {
             if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value))
                 continue;
             urlConnection.addRequestProperty(key, value);
-        }
+         }
     }
 
     public HttpRequestBuilder addParam(String name, String value) {
@@ -168,9 +168,6 @@ public class HttpRequestBuilder {
                     fileName, payload, headerFields);
         } catch (IOException e) {
             throw new HttpClientException("请求异常" + e.getMessage());
-        } finally {
-            if (httpURLConnection != null)
-                httpURLConnection.disconnect();
         }
         return httpResponse;
     }
