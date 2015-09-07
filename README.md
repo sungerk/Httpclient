@@ -40,4 +40,29 @@ android 6.0 移除了 apache httpclient  <br>
             e.printStackTrace();
         }
 ```
+##<a name="code"/>文件下载，支持断点续传
+```Java
+ DownloadDelegate   downloadDelegate = new DownloadDelegate(this, "http://dldir1.qq.com/weixin/android/weixin625android620.apk", "/sdcard/a/", new DownloadHandler() {
+            @Override
+            protected void onFinish(String msg) {
+
+            }
+
+            @Override
+            public void onError(String msg) {
+
+            }
+
+            @Override
+            protected void onSpeed(String speed) {
+
+            }
+        });
+        //开始下载
+        downloadDelegate.start();
+         //暂停下载
+        downloadDelegate.pause();
+```
+
+
 代码风格为什么眼熟？没错是很像async-http不过async-http是基于apache httpclient。这个问题可以追溯到几年前开始研究的开源库 [async-http](http://loopj.com/android-async-http/) ，so感谢开源代码，感谢James Smith <br>
