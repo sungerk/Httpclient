@@ -63,3 +63,25 @@ android 6.0 移除了 apache httpclient  <br>
          //暂停下载
         downloadDelegate.pause();
 ```
+
+##<a name="code"/>Https请求导入证书
+```Java
+  AsyncHttpCliect cliect = new AsyncHttpCliect();
+        try {
+            cliect.setCertificates(getAssets().open("srca.cer"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        cliect.get("https://kyfw.12306.cn/otn/", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(HttpResponse response) {
+                Log.d("-----HttpResponse--", response.getStatusCode() + "");
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                Log.d("-----Error--", error.getMessage());
+            }
+        });
+```
