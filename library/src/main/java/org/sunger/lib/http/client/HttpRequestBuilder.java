@@ -2,6 +2,7 @@ package org.sunger.lib.http.client;
 
 import android.text.TextUtils;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import org.sunger.lib.http.utils.UrlUtil;
 
@@ -17,13 +18,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+
 public class HttpRequestBuilder {
-    public static final String UTF8_CHAR_SET = "UTF-8";
+    private static final String TAG = HttpRequestBuilder.class.getSimpleName();
+    private static final String UTF8_CHAR_SET = "UTF-8";
+    private static final int DEFAULT_CONNECT_TIME_OUT = 10 * 1000;
+    private static final int DEFAULT_READ_TIME_OUT = 10 * 1000;
+    private int readTimeout = DEFAULT_READ_TIME_OUT;
+    private int connectTimeout = DEFAULT_CONNECT_TIME_OUT;
     private String urlString;
     private RequestMethod method;
     private Map<String, String> parameters = new ArrayMap<>();
+    private Map<String, String> clientHeaderMap = new ArrayMap<>();
     private HttpURLConnection httpURLConnection;
-    private HttpClient cliect;
+    private SSLSocketFactory sslSocketFactory;
 
     private static class Method {
         public static final String METHOD_GET = "GET";
@@ -33,11 +45,20 @@ public class HttpRequestBuilder {
         public static final String METHOD_HEAD = "HEAD";
     }
 
-    public HttpRequestBuilder(String url, RequestMethod method,
-                              HttpClient cliect) {
-        this.urlString = url;
-        this.cliect = cliect;
+
+    public HttpRequestBuilder setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+        return this;
+    }
+
+    public HttpRequestBuilder setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+        return this;
+    }
+
+    public HttpRequestBuilder setRequestMethod(RequestMethod method) {
         this.method = method;
+        return this;
     }
 
     public HttpRequestBuilder setUrl(String url) {
@@ -45,8 +66,13 @@ public class HttpRequestBuilder {
         return this;
     }
 
+    public HttpRequestBuilder setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
+        return this;
+    }
+
     private void addRequestProperty(URLConnection urlConnection) {
-        Iterator<Entry<String, String>> iter = cliect.getHeaderMap().entrySet()
+        Iterator<Entry<String, String>> iter = clientHeaderMap.entrySet()
                 .iterator();
         while (iter.hasNext()) {
             Entry<String, String> entry = iter.next();
@@ -55,7 +81,17 @@ public class HttpRequestBuilder {
             if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value))
                 continue;
             urlConnection.addRequestProperty(key, value);
-         }
+        }
+    }
+
+    public HttpRequestBuilder addHeader(String name, String value) {
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(value)) {
+            Log.d(TAG, "key和value不能为空!");
+        } else {
+            clientHeaderMap.put(name, value);
+        }
+
+        return this;
     }
 
     public HttpRequestBuilder addParam(String name, String value) {
@@ -86,7 +122,7 @@ public class HttpRequestBuilder {
             stringBuffer.append(URLEncoder.encode(value, UTF8_CHAR_SET));
             stringBuffer.append("&");
         }
-        if (stringBuffer.length() != 0)
+        if (stringBuffer.length() > 0)
             stringBuffer.delete(stringBuffer.length() - 1,
                     stringBuffer.length());
         return stringBuffer.toString();
@@ -128,16 +164,36 @@ public class HttpRequestBuilder {
                 || method == RequestMethod.PUT;
     }
 
+    private void setCertificates(HttpsURLConnection httpsURLConnection) {
+        if (sslSocketFactory != null) {
+            httpsURLConnection.setSSLSocketFactory(sslSocketFactory);
+        }
+    }
+
+    private void setAllowAllHostnameVerifier(HttpsURLConnection httpsURLConnection) {
+        httpsURLConnection.setHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        });
+    }
+
     private void makeRequest() throws IOException {
         URL url = new URL(parseUrl());
         httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setConnectTimeout(cliect.getConnectTimeout());
-        if (hasOutPut())
-            httpURLConnection.setDoOutput(true);
+        if (httpURLConnection instanceof HttpsURLConnection) {
+            setCertificates((HttpsURLConnection) httpURLConnection);
+            setAllowAllHostnameVerifier((HttpsURLConnection) httpURLConnection);
+        }
+        httpURLConnection.setConnectTimeout(connectTimeout);
+        httpURLConnection.setReadTimeout(readTimeout);
         httpURLConnection.setDoInput(true);
         httpURLConnection.setAllowUserInteraction(false);
         httpURLConnection.setInstanceFollowRedirects(false);
         httpURLConnection.setUseCaches(false);
+        if (hasOutPut())
+            httpURLConnection.setDoOutput(true);
         addRequestProperty(httpURLConnection);
         setRequestMethod(httpURLConnection);
     }
@@ -146,6 +202,7 @@ public class HttpRequestBuilder {
     private void sendRequest() throws IOException {
         httpURLConnection.connect();
         if (hasOutPut()) {
+            //发送输出参数
             String params = parseParam(parameters);
             byte[] bypes = params.toString().getBytes();
             httpURLConnection.getOutputStream().write(bypes);
