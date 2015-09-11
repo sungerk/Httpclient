@@ -85,4 +85,5 @@ android 6.0 移除了 apache httpclient  <br>
             }
         });
 ```
-下一次更新将实现(HttpResponseCache)[http://developer.android.com/reference/android/net/http/HttpResponseCache.html]请求缓存功能
+
+下一次更新将实现[HttpResponseCache]([http://developer.android.com/reference/android/net/http/HttpResponseCache.html)Http缓存功能
