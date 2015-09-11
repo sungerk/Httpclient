@@ -133,7 +133,7 @@ public class HttpRequestBuilder {
             throw new IllegalArgumentException("url不合法");
         }
         urlString = UrlUtil.parseUrl(urlString);
-        if (method == RequestMethod.GET) {
+        if (!hasOutPut()) {
             String param = parseParam(parameters);
             if (param.length() != 0) {
                 urlString = "?" + param;
@@ -141,6 +141,7 @@ public class HttpRequestBuilder {
         }
         return urlString;
     }
+
 
     private void setRequestMethod(HttpURLConnection connection)
             throws IOException {
