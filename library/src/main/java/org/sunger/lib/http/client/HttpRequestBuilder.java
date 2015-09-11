@@ -30,12 +30,12 @@ public class HttpRequestBuilder {
     private static final int DEFAULT_READ_TIME_OUT = 10 * 1000;
     private int readTimeout = DEFAULT_READ_TIME_OUT;
     private int connectTimeout = DEFAULT_CONNECT_TIME_OUT;
-    private String urlString;
-    private RequestMethod method;
     private Map<String, String> parameters = new ArrayMap<>();
     private Map<String, String> clientHeaderMap = new ArrayMap<>();
     private HttpURLConnection httpURLConnection;
     private SSLSocketFactory sslSocketFactory;
+    private String urlString;
+    private RequestMethod method;
 
     private static class Method {
         public static final String METHOD_GET = "GET";
@@ -209,23 +209,25 @@ public class HttpRequestBuilder {
         }
     }
 
+    private HttpResponse getHttpResponse(HttpURLConnection httpURLConnection) throws Exception {
+        InputStream payload = httpURLConnection.getInputStream();
+        int responseCode = httpURLConnection.getResponseCode();
+        Map<String, List<String>> headerFields = httpURLConnection
+                .getHeaderFields();
+        int contentLength = httpURLConnection.getContentLength();
+        String file = httpURLConnection.getURL().getFile().toString();
+        String fileName = file.substring(file.lastIndexOf('/') + 1);
+        return new HttpResponse(responseCode, contentLength,
+                fileName, payload, headerFields);
+    }
+
     public HttpResponse execute() throws HttpClientException {
-        HttpResponse httpResponse = null;
         try {
             makeRequest();
             sendRequest();
-            InputStream payload = httpURLConnection.getInputStream();
-            int responseCode = httpURLConnection.getResponseCode();
-            Map<String, List<String>> headerFields = httpURLConnection
-                    .getHeaderFields();
-            int contentLength = httpURLConnection.getContentLength();
-            String file = httpURLConnection.getURL().getFile().toString();
-            String fileName = file.substring(file.lastIndexOf('/') + 1);
-            httpResponse = new HttpResponse(responseCode, contentLength,
-                    fileName, payload, headerFields);
-        } catch (IOException e) {
+            return getHttpResponse(httpURLConnection);
+        } catch (Exception e) {
             throw new HttpClientException("请求异常" + e.getMessage());
         }
-        return httpResponse;
     }
 }
