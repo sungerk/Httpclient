@@ -2,10 +2,6 @@ package org.sunger.lib.http.client;
 
 import android.os.Build;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -96,20 +92,6 @@ public final class HttpResponse {
     public InputStream getPayload() {
         return payload;
     }
-
-    void preload(File temp) throws IOException {
-        @SuppressWarnings("resource")
-        final FileOutputStream out = new FileOutputStream(temp);
-        final byte[] inBuf = new byte[1024];
-        final InputStream in = getPayload();
-        for (int bytesRead = 0; (bytesRead = in.read(inBuf)) != -1; ) {
-            out.write(inBuf, 0, bytesRead);
-        }
-
-        payload = new FileInputStream(temp);
-    }
-
-
 
     public int getStatusCode() {
         return statusCode;
