@@ -217,7 +217,9 @@ public class HttpRequestBuilder {
 		int contentLength = httpURLConnection.getContentLength();
 		String contentType = httpURLConnection.getContentType();
 		int stateCode = httpURLConnection.getResponseCode();
-		return new HttpResponse(contentLength, contentType, stateCode, payload,
+        String file = httpURLConnection.getURL().getFile().toString();
+        String fileName = file.substring(file.lastIndexOf('/') + 1);
+		return new HttpResponse(fileName,contentLength, contentType, stateCode, payload,
 				headerFields);
 	}
 
