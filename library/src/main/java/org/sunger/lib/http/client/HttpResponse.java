@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public class HttpResponse {
+	private final static String CONTENT_DISPOSTION_CHAR = "attachment; filename=";
+	private final static String CONTENT_DISPOSTION = "Content-Disposition";
 	private Map<String, List<String>> headers;
 	private InputStream payload;
 	private int contentLength;
@@ -19,8 +21,10 @@ public class HttpResponse {
 	private String fileName;
 	private String result = "";
 
-	public HttpResponse(int contentLength, String contentType, int statusCode,
-			InputStream payload, Map<String, List<String>> rawHeaders) {
+	public HttpResponse(String fileName, int contentLength, String contentType,
+			int statusCode, InputStream payload,
+			Map<String, List<String>> rawHeaders) {
+		this.fileName = fileName;
 		this.contentLength = contentLength;
 		this.contentType = contentType;
 		this.statusCode = statusCode;
@@ -30,10 +34,13 @@ public class HttpResponse {
 
 	private void init(Map<String, List<String>> rawHeaders) {
 		initHeaders(rawHeaders);
-		String contentDispositionStr = getFirstHeaderValue("Content-Disposition");
-		if (!TextUtils.isEmpty(contentDispositionStr)) {
-			fileName = contentDispositionStr.replace("attachment; filename=",
-					"").trim();
+		String contentDispositionStr = getFirstHeaderValue(CONTENT_DISPOSTION);
+		//当文件名为空，且获取到Header字符串不为空的
+		if (!TextUtils.isEmpty(contentDispositionStr)
+				&& TextUtils.isEmpty(fileName)) {
+			// 切割获取文件名
+			fileName = contentDispositionStr.substring(CONTENT_DISPOSTION_CHAR
+					.length());
 		}
 		if (TextUtils.isEmpty(fileName)) {
 			result = readToText();
